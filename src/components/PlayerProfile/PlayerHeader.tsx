@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Chip, Button, useTheme, useMediaQuery } from '@mui/material';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, UserX } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Player } from '../../data/draftData';
 import { formatHeight, formatAge } from '../../utils/formatters';
@@ -15,9 +15,6 @@ const PlayerHeader: React.FC<PlayerHeaderProps> = ({ player, averageRank }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
-  // Default placeholder image if player photo is not available
-  const placeholderImage = 'https://images.pexels.com/photos/1103835/pexels-photo-1103835.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
-
   return (
     <Box
       sx={{
@@ -25,7 +22,7 @@ const PlayerHeader: React.FC<PlayerHeaderProps> = ({ player, averageRank }) => {
         mb: 4,
         borderRadius: { xs: 0, md: 2 },
         overflow: 'hidden',
-        bgcolor: '#f1f5f9'
+        bgcolor: '#121212'
       }}
     >
       <Box
@@ -35,7 +32,7 @@ const PlayerHeader: React.FC<PlayerHeaderProps> = ({ player, averageRank }) => {
           left: 0,
           right: 0,
           height: '50%',
-          bgcolor: '#0F52BA',
+          bgcolor: '#00538C',
           zIndex: 0
         }}
       />
@@ -49,7 +46,7 @@ const PlayerHeader: React.FC<PlayerHeaderProps> = ({ player, averageRank }) => {
           size="small"
           sx={{
             bgcolor: 'rgba(255, 255, 255, 0.9)',
-            color: '#0F52BA',
+            color: '#00538C',
             mb: 2,
             '&:hover': {
               bgcolor: 'rgba(255, 255, 255, 1)',
@@ -74,25 +71,33 @@ const PlayerHeader: React.FC<PlayerHeaderProps> = ({ player, averageRank }) => {
               height: { xs: 180, sm: 220, md: 260 },
               borderRadius: '50%',
               overflow: 'hidden',
-              border: '4px solid white',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+              border: '4px solid #1E1E1E',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: '#1E1E1E'
             }}
           >
-            <img
-              src={player.photoUrl || placeholderImage}
-              alt={player.name}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover'
-              }}
-            />
+            {player.photoUrl ? (
+              <img
+                src={player.photoUrl}
+                alt={player.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+            ) : (
+              <UserX size={80} color="#666" />
+            )}
           </Box>
 
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
               flexDirection: { xs: 'column', md: 'row' },
               justifyContent: { xs: 'center', md: 'flex-start' },
               gap: { xs: 1, md: 2 },
@@ -108,12 +113,12 @@ const PlayerHeader: React.FC<PlayerHeaderProps> = ({ player, averageRank }) => {
               >
                 {player.firstName} {player.lastName}
               </Typography>
-              
+
               <Chip
                 label={`#${Math.round(averageRank)} Prospect`}
                 sx={{
                   bgcolor: 'rgba(255, 255, 255, 0.9)',
-                  color: '#0F52BA',
+                  color: '#00538C',
                   fontWeight: 700,
                   fontSize: '0.9rem'
                 }}
@@ -135,8 +140,7 @@ const PlayerHeader: React.FC<PlayerHeaderProps> = ({ player, averageRank }) => {
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: 1,
-                justifyContent: { xs: 'center', md: 'flex-start' },
-                mb: 2
+                justifyContent: { xs: 'center', md: 'flex-start' }
               }}
             >
               <Chip
