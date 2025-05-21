@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardMedia, CardActionArea, Typography, Box, Chip, useTheme, useMediaQuery } from '@mui/material';
-import { ChevronRight, Star, TrendingDown, TrendingUp, UserX } from 'lucide-react';
+import { ChevronRight, Star, TrendingDown, TrendingUp, UserX, Minus } from 'lucide-react';
 import { Player, ScoutRanking } from '../../data/draftData';
 import { formatHeight, formatAge } from '../../utils/formatters';
 
@@ -19,9 +19,12 @@ const ProspectCard: React.FC<ProspectCardProps> = ({ player, ranking, boardRank 
     .filter(([key]) => key !== 'playerId' && !isNaN(ranking[key]))
     .map(([_, value]) => value);
 
-  const avgRank = scoutRanks.reduce((acc, curr) => acc + curr, 0) / scoutRanks.length;
+  const avgRank = scoutRanks.length > 0
+    ? scoutRanks.reduce((acc, curr) => acc + curr, 0) / scoutRanks.length
+    : null;
 
-  const getScoutOpinion = (scoutRank: number, avgRank: number) => {
+  const getScoutOpinion = (scoutRank: number | null, avgRank: number | null) => {
+    if (scoutRank === null || avgRank === null) return 'unranked';
     const deviation = scoutRank - avgRank;
     if (deviation <= -2) return 'high';
     if (deviation >= 2) return 'low';
@@ -125,31 +128,42 @@ const ProspectCard: React.FC<ProspectCardProps> = ({ player, ranking, boardRank 
           </Box>
 
           <Typography variant="body2" color="text.secondary" align="center" paragraph sx={{ mb: 2 }}>
-            Scout rankings deviation from average ({avgRank.toFixed(1)}):
+            Scout rankings {avgRank !== null ? `(avg: ${avgRank.toFixed(1)})` : ''}:
           </Typography>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
             {Object.entries(ranking)
-              .filter(([key]) => key !== 'playerId' && !isNaN(ranking[key]))
+              .filter(([key]) => key !== 'playerId')
               .map(([scout, rank]) => {
-                const opinion = getScoutOpinion(rank, avgRank);
+                const opinion = getScoutOpinion(isNaN(rank) ? null : rank, avgRank);
                 return (
                   <Box key={scout} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Typography variant="body2" sx={{ minWidth: isMobile ? '120px' : '180px', fontWeight: 500 }}>
                       {scout.replace(' Rank', '')}:
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography variant="body2" fontWeight={600}>
-                        {rank}
-                      </Typography>
-                      {opinion === 'high' && (
-                        <TrendingUp size={16} color="#16a34a" style={{ marginLeft: 4 }} />
-                      )}
-                      {opinion === 'low' && (
-                        <TrendingDown size={16} color="#dc2626" style={{ marginLeft: 4 }} />
-                      )}
-                      {opinion === 'neutral' && (
-                        <Star size={16} color="#eab308" style={{ marginLeft: 4 }} />
+                      {isNaN(rank) ? (
+                        <>
+                          <Typography variant="body2" sx={{ color: '#dc2626', fontWeight: 600 }}>
+                            -
+                          </Typography>
+                          <Minus size={16} color="#dc2626" style={{ marginLeft: 4 }} />
+                        </>
+                      ) : (
+                        <>
+                          <Typography variant="body2" fontWeight={600}>
+                            {rank}
+                          </Typography>
+                          {opinion === 'high' && (
+                            <TrendingUp size={16} color="#16a34a" style={{ marginLeft: 4 }} />
+                          )}
+                          {opinion === 'low' && (
+                            <TrendingDown size={16} color="#dc2626" style={{ marginLeft: 4 }} />
+                          )}
+                          {opinion === 'neutral' && (
+                            <Star size={16} color="#eab308" style={{ marginLeft: 4 }} />
+                          )}
+                        </>
                       )}
                     </Box>
                   </Box>
