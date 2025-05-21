@@ -59,7 +59,7 @@ const ProspectCard: React.FC<ProspectCardProps> = ({ player, ranking, boardRank 
               bgcolor: '#1E1E1E'
             }}
           >
-            {player. ? (
+            {player.photoUrl ? (
               <CardMedia
                 component="img"
                 image={player.photoUrl}
